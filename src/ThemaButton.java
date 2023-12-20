@@ -4,6 +4,10 @@ import java.awt.*;
 public class ThemaButton extends JButton {
 
     Thema thema;
+    private Color guessButtonCol;
+    private Color guessButtonCorrect;
+    private Color guessButtonFalse;
+    private boolean wasGuessed;
 
     public ThemaButton(Thema thema) {
         this.thema = thema;
@@ -15,6 +19,10 @@ public class ThemaButton extends JButton {
         addActionListener(e -> {
             createQuestionWindow();
         });
+        guessButtonCol = new Color(171, 171, 171);
+        guessButtonCorrect = new Color(170, 255, 95);
+        guessButtonFalse = new Color(255, 110, 110);
+        wasGuessed = false;
     }
 
     private void createQuestionWindow() {
@@ -43,7 +51,9 @@ public class ThemaButton extends JButton {
 
     private JPanel createQuestionPanel() {
         JPanel questionPanel =  new JPanel();
+        System.out.println("T: " + thema.name);
         for(Question question: DBHelper.getQuestions(thema)) {
+            wasGuessed = false;
             System.out.println("Q: " + question.q);
 
             JPanel upPanel = new JPanel();
@@ -51,6 +61,7 @@ public class ThemaButton extends JButton {
             JButton conButton = new JButton("Weiter");
             conButton.addActionListener(e -> {
                 // TODO implement logic
+                conButton.setBackground((wasGuessed) ? guessButtonCorrect : guessButtonFalse);
             });
 
             upPanel.setLayout(new BorderLayout());
@@ -69,13 +80,77 @@ public class ThemaButton extends JButton {
             dPanel.add(ab3);
             dPanel.add(ab4);
 
-            // TODO guess logic
+            ab1.addActionListener(e -> guessButtonAction(1, question, ab1, ab2, ab3, ab4));
+            ab2.addActionListener(e -> guessButtonAction(2, question, ab1, ab2, ab3, ab4));
+            ab3.addActionListener(e -> guessButtonAction(3, question, ab1, ab2, ab3, ab4));
+            ab4.addActionListener(e -> guessButtonAction(4, question, ab1, ab2, ab3, ab4));
+
+            ab1.setBackground(guessButtonCol);
+            ab2.setBackground(guessButtonCol);
+            ab3.setBackground(guessButtonCol);
+            ab4.setBackground(guessButtonCol);
 
             questionPanel.setLayout(new GridLayout(0, 1));
             questionPanel.add(upPanel);
             questionPanel.add(dPanel);
+
+            // TODO implement going to the next question
         }
         return questionPanel;
+    }
+
+    private void guessButtonAction(int clicked, Question q, JButton ab1, JButton ab2, JButton ab3, JButton ab4) {
+        if (!wasGuessed) switch (clicked) {
+            case 1 -> {
+                if (q.ca == clicked) {
+                    ab1.setBackground(guessButtonCorrect);
+                } else {
+                    ab1.setBackground(guessButtonFalse);
+                    switch (q.ca) {
+                        case 2 -> ab2.setBackground(guessButtonCorrect);
+                        case 3 -> ab3.setBackground(guessButtonCorrect);
+                        case 4 -> ab4.setBackground(guessButtonCorrect);
+                    }
+                }
+            }
+            case 2 -> {
+                if (q.ca == clicked) {
+                    ab2.setBackground(guessButtonCorrect);
+                } else {
+                    ab2.setBackground(guessButtonFalse);
+                    switch (q.ca) {
+                        case 1 -> ab1.setBackground(guessButtonCorrect);
+                        case 3 -> ab3.setBackground(guessButtonCorrect);
+                        case 4 -> ab4.setBackground(guessButtonCorrect);
+                    }
+                }
+            }
+            case 3 -> {
+                if (q.ca == clicked) {
+                    ab3.setBackground(guessButtonCorrect);
+                } else {
+                    ab3.setBackground(guessButtonFalse);
+                    switch (q.ca) {
+                        case 2 -> ab2.setBackground(guessButtonCorrect);
+                        case 1 -> ab1.setBackground(guessButtonCorrect);
+                        case 4 -> ab4.setBackground(guessButtonCorrect);
+                    }
+                }
+            }
+            case 4 -> {
+                if (q.ca == clicked) {
+                    ab4.setBackground(guessButtonCorrect);
+                } else {
+                    ab4.setBackground(guessButtonFalse);
+                    switch (q.ca) {
+                        case 2 -> ab2.setBackground(guessButtonCorrect);
+                        case 3 -> ab3.setBackground(guessButtonCorrect);
+                        case 1 -> ab1.setBackground(guessButtonCorrect);
+                    }
+                }
+            }
+        }
+        wasGuessed = true;
     }
 
 }
