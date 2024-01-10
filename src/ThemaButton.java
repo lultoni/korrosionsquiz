@@ -28,6 +28,7 @@ public class ThemaButton extends JButton {
             questionWindow = createQuestionWindow();
             questionWindow.setVisible(true);
         });
+        setEnabled(!questions.isEmpty());
         guessButtonCol = new Color(171, 171, 171);
         guessButtonCorrect = new Color(170, 255, 95);
         guessButtonFalse = new Color(255, 110, 110);
@@ -73,11 +74,8 @@ public class ThemaButton extends JButton {
             questionIndex++;
             System.out.println("qs" + questions.size());
             System.out.println("qin" + questionIndex);
-            if (questionIndex >= questions.size()) {
-                questionWindow.dispose();
-            } else {
-                questionWindow = createQuestionWindow();
-            }
+            questionWindow.dispose();
+            if (questionIndex < questions.size()) questionWindow = createQuestionWindow();
 
         });
 
