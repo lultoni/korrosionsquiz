@@ -29,7 +29,7 @@ public class Window extends JFrame {
         topPanel.setLayout(new GridLayout());
         JLabel titleLabel = new JLabel(getTitle());
         topPanel.add(titleLabel);
-        JButton exitButton = new JButton("Exit");
+        JButton exitButton = new JButton("Programm beenden");
         exitButton.addActionListener(e -> System.exit(69420));
         topPanel.add(exitButton);
         add(topPanel, BorderLayout.NORTH);

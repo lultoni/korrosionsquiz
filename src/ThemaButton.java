@@ -1,6 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 public class ThemaButton extends JButton {
 
@@ -12,19 +14,24 @@ public class ThemaButton extends JButton {
     private JFrame questionWindow;
     private final ArrayList<Question> questions;
     private int questionIndex;
+    private int userScore;
 
     public ThemaButton(Thema thema) {
         this.thema = thema;
         this.questionWindow = null;
         this.questions = DBHelper.getQuestions(thema);
+        Collections.shuffle(questions);
         this.questionIndex = 0;
+        this.userScore = 0;
         init();
     }
 
     private void init() {
-        setText(thema.name);
+        updateText();
         addActionListener(e -> {
             System.out.println("In Thema: " + thema.name);
+            this.questionIndex = 0;
+            this.userScore = 0;
             questionWindow = createQuestionWindow();
             questionWindow.setVisible(true);
         });
@@ -49,7 +56,7 @@ public class ThemaButton extends JButton {
         JButton backButton = new JButton("Zurück zum Startmenü");
         backButton.addActionListener(e -> {
             frame.dispose();
-            // TODO add logic for counting correct questions etc
+            updateText();
         });
         nP.add(backButton);
 
@@ -68,15 +75,15 @@ public class ThemaButton extends JButton {
 
         JPanel upPanel = new JPanel();
         JLabel qLabel = new JLabel(question.q);
-        JButton conButton = new JButton("Weiter");
+        JButton conButton = new JButton("Weiter"); // TODO enable when button was pressed (move to class vars)
         conButton.addActionListener(e -> {
             conButton.setBackground((wasGuessed) ? guessButtonCorrect : guessButtonFalse);
-            questionIndex++;
-            System.out.println("qs" + questions.size());
-            System.out.println("qin" + questionIndex);
-            questionWindow.dispose();
-            if (questionIndex < questions.size()) questionWindow = createQuestionWindow();
-
+            if (wasGuessed) {
+                questionIndex++;
+                questionWindow.dispose();
+                updateText();
+                if (questionIndex < questions.size()) questionWindow = createQuestionWindow();
+            }
         });
 
         upPanel.setLayout(new BorderLayout());
@@ -95,10 +102,10 @@ public class ThemaButton extends JButton {
         dPanel.add(ab3);
         dPanel.add(ab4);
 
-        ab1.addActionListener(e -> guessButtonAction(1, question, ab1, ab2, ab3, ab4));
-        ab2.addActionListener(e -> guessButtonAction(2, question, ab1, ab2, ab3, ab4));
-        ab3.addActionListener(e -> guessButtonAction(3, question, ab1, ab2, ab3, ab4));
-        ab4.addActionListener(e -> guessButtonAction(4, question, ab1, ab2, ab3, ab4));
+        ab1.addActionListener(e -> guessButtonAction(1, question, ab1, ab2, ab3, ab4, question.score));
+        ab2.addActionListener(e -> guessButtonAction(2, question, ab1, ab2, ab3, ab4, question.score));
+        ab3.addActionListener(e -> guessButtonAction(3, question, ab1, ab2, ab3, ab4, question.score));
+        ab4.addActionListener(e -> guessButtonAction(4, question, ab1, ab2, ab3, ab4, question.score));
 
         ab1.setBackground(guessButtonCol);
         ab2.setBackground(guessButtonCol);
@@ -111,11 +118,25 @@ public class ThemaButton extends JButton {
         return questionPanel;
     }
 
-    private void guessButtonAction(int clicked, Question q, JButton ab1, JButton ab2, JButton ab3, JButton ab4) {
+    private void updateText() {
+        this.setText(thema.name + " (Score: " + userScore + "/" + getBestScore() + ")");
+    }
+
+    private int getBestScore() {
+        int back = 0;
+        for (Question question: questions) {
+            back += question.score;
+        }
+        return back;
+    }
+
+    private void guessButtonAction(int clicked, Question q, JButton ab1, JButton ab2, JButton ab3, JButton ab4, int questionScore) {
+        boolean corAns = false;
         if (!wasGuessed) switch (clicked) {
             case 1 -> {
                 if (q.ca == clicked) {
                     ab1.setBackground(guessButtonCorrect);
+                    corAns = true;
                 } else {
                     ab1.setBackground(guessButtonFalse);
                     switch (q.ca) {
@@ -128,6 +149,7 @@ public class ThemaButton extends JButton {
             case 2 -> {
                 if (q.ca == clicked) {
                     ab2.setBackground(guessButtonCorrect);
+                    corAns = true;
                 } else {
                     ab2.setBackground(guessButtonFalse);
                     switch (q.ca) {
@@ -140,6 +162,7 @@ public class ThemaButton extends JButton {
             case 3 -> {
                 if (q.ca == clicked) {
                     ab3.setBackground(guessButtonCorrect);
+                    corAns = true;
                 } else {
                     ab3.setBackground(guessButtonFalse);
                     switch (q.ca) {
@@ -152,6 +175,7 @@ public class ThemaButton extends JButton {
             case 4 -> {
                 if (q.ca == clicked) {
                     ab4.setBackground(guessButtonCorrect);
+                    corAns = true;
                 } else {
                     ab4.setBackground(guessButtonFalse);
                     switch (q.ca) {
@@ -162,6 +186,7 @@ public class ThemaButton extends JButton {
                 }
             }
         }
+        if (corAns) userScore += questionScore;
         wasGuessed = true;
     }
 
