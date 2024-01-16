@@ -76,7 +76,7 @@ public class ThemaButton extends JButton {
 
         JPanel upPanel = new JPanel();
         upPanel.setLayout(new BorderLayout());
-        JLabel qLabel = new JLabel(question.q);
+        JLabel qLabel = new JLabel("<html>" + question.q + "<html>");
         qLabel.setFont(new Font("Dialog", Font.BOLD, 15));
         conButton.addActionListener(e -> {
             if (wasGuessed) {
