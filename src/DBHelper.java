@@ -1,46 +1,10 @@
 import javax.swing.*;
-import java.awt.*;
 import java.sql.*;
 import java.util.ArrayList;
 
 public class DBHelper {
 
     private static final String filename = "KorrosionsDatenbank.db";
-
-    public static void SQL_command(String command) {
-        try{
-            Connection connection = getConnection(filename);
-            PreparedStatement statement = connection.prepareStatement(command);
-            ResultSet resultSet = statement.executeQuery();
-
-            try {
-                ResultSetMetaData metaData = resultSet.getMetaData();
-                int columnCount = metaData.getColumnCount();
-                String header = "\n| ";
-                for (int i = 1; i <= columnCount; i++) {
-                    header += metaData.getColumnName(i);
-                    if (i + 1 <= columnCount) header += " | ";
-                }
-                System.out.println(header + " |");
-                while (resultSet.next()) {
-                    String line = " - | ";
-                    for (int i = 1; i <= columnCount; i++) {
-                        line += resultSet.getObject(i);
-                        if (i + 1 <= columnCount) line += " | ";
-                    }
-                    System.out.println(line + " |");
-                }
-                System.out.println();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-
-            resultSet.close();
-            statement.close();
-        } catch (SQLException e){
-            System.out.println(e.getMessage());
-        }
-    }
 
     public static Connection getConnection(String filename){
         Connection connection = null;
@@ -73,15 +37,12 @@ public class DBHelper {
             resultSet.close();
             statement.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(e + " - SQL Error");
         }
 
         return out;
     }
 
-    public static void addThema(String text) {
-        SQL_command("INSERT INTO Thema (Name) VALUES ('" + text + "');\n");
-    }
 
     public static ArrayList<Question> getQuestions(Thema thema) {
         ArrayList<Question> out = new ArrayList<>();
@@ -104,17 +65,21 @@ public class DBHelper {
                 int themaID = resultSet.getInt("ThemaID");
 
 
-                Question question = new Question(q, a1, a2, a3, a4, ca, score, (imgPath == null) ? null : new ImageIcon(imgPath).getImage(), getThema(themaID));
+                Question question = new Question(q, addHTML(a1), addHTML(a2), addHTML(a3), addHTML(a4), ca, score, (imgPath == null) ? null : new ImageIcon(imgPath).getImage(), getThema(themaID));
                 if (question.thema.name.equals(thema.name)) out.add(question);
             }
 
             resultSet.close();
             statement.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(e + " - SQL Error");
         }
 
         return out;
+    }
+
+    private static String addHTML(String s) {
+        return "<html>" + s + "<html>";
     }
 
     public static Thema getThema(int themaID) {
@@ -135,7 +100,7 @@ public class DBHelper {
             resultSet.close();
             statement.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(e + " - SQL Error");
         }
         return null;
     }
