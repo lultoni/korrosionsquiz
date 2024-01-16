@@ -1,7 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
-import java.util.List;
 
 public class ThemaButton extends JButton {
 
@@ -14,6 +13,7 @@ public class ThemaButton extends JButton {
     private final ArrayList<Question> questions;
     private int questionIndex;
     private int userScore;
+    private final JButton conButton = new JButton("Weiter");
 
     public ThemaButton(Thema thema) {
         this.thema = thema;
@@ -74,9 +74,7 @@ public class ThemaButton extends JButton {
 
         JPanel upPanel = new JPanel();
         JLabel qLabel = new JLabel(question.q);
-        JButton conButton = new JButton("Weiter"); // TODO enable when button was pressed (move to class vars)
         conButton.addActionListener(e -> {
-            conButton.setBackground((wasGuessed) ? guessButtonCorrect : guessButtonFalse);
             if (wasGuessed) {
                 questionIndex++;
                 questionWindow.dispose();
@@ -84,6 +82,7 @@ public class ThemaButton extends JButton {
                 if (questionIndex < questions.size()) questionWindow = createQuestionWindow();
             }
         });
+        conButton.setEnabled(false);
 
         upPanel.setLayout(new BorderLayout());
         upPanel.add(qLabel);
@@ -131,7 +130,16 @@ public class ThemaButton extends JButton {
     }
 
     private void updateText() {
-        this.setText(thema.name + " (Score: " + userScore + "/" + getBestScore() + ")");
+        setText(thema.name + " (Score: " + userScore + "/" + getBestScore() + ")");
+        updateBackgroundColor();
+    }
+
+    private void updateBackgroundColor() {
+        float percentage = (float) userScore / getBestScore();
+        int r = (int) (235 + percentage * (178 - 235));
+        int b = (int) (224 + percentage * (144 - 224));
+        Color backgroundColor = new Color(r, 255, b);
+        setBackground(backgroundColor);
     }
 
     private int getBestScore() {
@@ -144,6 +152,7 @@ public class ThemaButton extends JButton {
 
     private void guessButtonAction(int clicked, Question q, JButton ab1, JButton ab2, JButton ab3, JButton ab4, int corAnsNum) {
         boolean corAns = false;
+        conButton.setEnabled(true);
         if (!wasGuessed) switch (clicked) {
             case 1 -> {
                 if (corAnsNum == clicked) {

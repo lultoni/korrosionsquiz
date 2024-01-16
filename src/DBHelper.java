@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.awt.*;
 import java.sql.*;
 import java.util.ArrayList;
@@ -103,7 +104,7 @@ public class DBHelper {
                 int themaID = resultSet.getInt("ThemaID");
 
 
-                Question question = new Question(q, a1, a2, a3, a4, ca, score, null, getThema(themaID));
+                Question question = new Question(q, a1, a2, a3, a4, ca, score, (imgPath == null) ? null : new ImageIcon(imgPath).getImage(), getThema(themaID));
                 if (question.thema.name.equals(thema.name)) out.add(question);
             }
 
