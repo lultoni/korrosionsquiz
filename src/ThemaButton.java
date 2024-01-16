@@ -27,6 +27,7 @@ public class ThemaButton extends JButton {
 
     private void init() {
         updateText();
+        setFont(new Font("Arial", Font.BOLD, 15));
         addActionListener(e -> {
             System.out.println("In Thema: " + thema.name);
             this.questionIndex = 0;
@@ -50,6 +51,7 @@ public class ThemaButton extends JButton {
         JPanel nP = new JPanel(new GridLayout());
 
         JLabel title = new JLabel(getText());
+        title.setFont(new Font("Arial", Font.BOLD, 20));
         nP.add(title);
 
         JButton backButton = new JButton("Zurück zum Startmenü");
@@ -73,7 +75,9 @@ public class ThemaButton extends JButton {
         wasGuessed = false;
 
         JPanel upPanel = new JPanel();
+        upPanel.setLayout(new BorderLayout());
         JLabel qLabel = new JLabel(question.q);
+        qLabel.setFont(new Font("Dialog", Font.BOLD, 15));
         conButton.addActionListener(e -> {
             if (wasGuessed) {
                 questionIndex++;
@@ -84,8 +88,16 @@ public class ThemaButton extends JButton {
         });
         conButton.setEnabled(false);
 
-        upPanel.setLayout(new BorderLayout());
-        upPanel.add(qLabel);
+        if (question.imagePath == null) {
+            upPanel.add(qLabel);
+        } else {
+            JPanel innerUpPanel = new JPanel();
+            ImagePanel imagePanel = new ImagePanel(question.imagePath);
+            innerUpPanel.setLayout(new GridLayout());
+            innerUpPanel.add(qLabel);
+            innerUpPanel.add(imagePanel);
+            upPanel.add(innerUpPanel);
+        }
         upPanel.add(conButton, BorderLayout.EAST);
 
         JPanel dPanel = new JPanel();

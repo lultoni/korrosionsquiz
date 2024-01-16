@@ -61,11 +61,11 @@ public class DBHelper {
                 String a4 = resultSet.getString("AntwortD");
                 int ca = resultSet.getInt("RichtigeAntwort");
                 int score = resultSet.getInt("Score");
-                String imgPath = resultSet.getString("Bildpfad"); // TODO add this
+                String imgPath = resultSet.getString("Bildpfad");
                 int themaID = resultSet.getInt("ThemaID");
 
 
-                Question question = new Question(q, addHTML(a1), addHTML(a2), addHTML(a3), addHTML(a4), ca, score, (imgPath == null) ? null : new ImageIcon(imgPath).getImage(), getThema(themaID));
+                Question question = new Question(q, addHTML(a1), addHTML(a2), addHTML(a3), addHTML(a4), ca, score, imgPath, getThema(themaID));
                 if (question.thema.name.equals(thema.name)) out.add(question);
             }
 

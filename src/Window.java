@@ -28,6 +28,7 @@ public class Window extends JFrame {
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new GridLayout());
         JLabel titleLabel = new JLabel(getTitle());
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
         topPanel.add(titleLabel);
         JButton exitButton = new JButton("Programm beenden");
         exitButton.addActionListener(e -> System.exit(69420));
