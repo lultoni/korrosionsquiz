@@ -50,7 +50,7 @@ public class ThemaButton extends JButton {
 
         JPanel nP = new JPanel(new GridLayout());
 
-        JLabel title = new JLabel(getText());
+        JLabel title = new JLabel(getText() + " - Frage " + (questionIndex + 1) + "/" + questions.size());
         title.setFont(new Font("Arial", Font.BOLD, 20));
         nP.add(title);
 
@@ -78,6 +78,7 @@ public class ThemaButton extends JButton {
         upPanel.setLayout(new BorderLayout());
         JLabel qLabel = new JLabel("<html>" + question.q + "<html>");
         qLabel.setFont(new Font("Dialog", Font.BOLD, 15));
+        qLabel.setHorizontalAlignment(SwingConstants.CENTER);
         conButton.addActionListener(e -> {
             if (wasGuessed) {
                 questionIndex++;
@@ -148,8 +149,8 @@ public class ThemaButton extends JButton {
 
     private void updateBackgroundColor() {
         float percentage = (float) userScore / getBestScore();
-        int r = (int) (235 + percentage * (178 - 235));
-        int b = (int) (224 + percentage * (144 - 224));
+        int r = (int) (255 + percentage * (178 - 255));
+        int b = (int) (255 + percentage * (144 - 255));
         Color backgroundColor = new Color(r, 255, b);
         setBackground(backgroundColor);
     }
